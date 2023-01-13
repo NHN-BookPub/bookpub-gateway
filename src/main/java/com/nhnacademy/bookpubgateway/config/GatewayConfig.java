@@ -36,15 +36,15 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator frontLocator(RouteLocatorBuilder builder) {
-        log.error("front-url : {}", frontUrl);
-        log.error("shop-url : {}", shoppingUrl);
-        log.error("auth-url : {}", authUrl);
-        log.error("delivery-url : {}", deliveryUrl);
+        log.info("front-url : {}", frontUrl);
+        log.info("shop-url : {}", shoppingUrl);
+        log.info("auth-url : {}", authUrl);
+        log.info("delivery-url : {}", deliveryUrl);
 
-        log.error("front-pattern-url : {}", frontUrlPattern);
-        log.error("shop-pattern-url : {}", shoppingUrlPattern);
-        log.error("auth-pattern-url : {}", authUrlPattern);
-        log.error("delivery-pattern-url : {}", deliveryUrlPattern);
+        log.info("front-pattern-url : {}", frontUrlPattern);
+        log.info("shop-pattern-url : {}", shoppingUrlPattern);
+        log.info("auth-pattern-url : {}", authUrlPattern);
+        log.info("delivery-pattern-url : {}", deliveryUrlPattern);
 
         log.warn("frontLocator call()");
         RouteLocator build = builder.routes()
