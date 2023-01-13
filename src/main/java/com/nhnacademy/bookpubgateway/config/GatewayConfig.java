@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubgateway.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @author : 임태원
  * @since : 1.0
  **/
+@Slf4j
 @Configuration
 public class GatewayConfig {
     @Value("${bookpub.front.url}")
@@ -40,7 +42,8 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator frontLocator(RouteLocatorBuilder builder) {
-        return builder.routes()
+        log.warn("frontLocator call()");
+        RouteLocator build = builder.routes()
                 .route("front", r -> r.path(frontUrlPattern)
                         .uri(frontUrl))
                 .route("auth", r -> r.path(authUrlPattern)
@@ -50,5 +53,7 @@ public class GatewayConfig {
                 .route("shopping", r -> r.path(shoppingUrlPattern)
                         .uri(shoppingUrl))
                 .build();
+        log.warn("routes() 돔");
+        return build;
     }
 }
