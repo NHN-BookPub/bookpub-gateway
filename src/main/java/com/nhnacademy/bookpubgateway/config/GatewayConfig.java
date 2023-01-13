@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubgateway.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,30 +15,23 @@ import org.springframework.context.annotation.Configuration;
  * @since : 1.0
  **/
 @Slf4j
+@ConfigurationProperties(prefix = "bookpub")
 @Configuration
 public class GatewayConfig {
-    @Value("${bookpub.front.url}")
     private String frontUrl;
 
-    @Value("${bookpub.auth.url}")
     private String authUrl;
 
-    @Value("${bookpub.delivery.url}")
     private String deliveryUrl;
 
-    @Value("${bookpub.shopping.url}")
     private String shoppingUrl;
 
-    @Value("${bookpub.auth.url.pattern}")
     private String authUrlPattern;
 
-    @Value("${bookpub.delivery.url.pattern}")
     private String deliveryUrlPattern;
 
-    @Value("${bookpub.shopping.url.pattern}")
     private String shoppingUrlPattern;
 
-    @Value("${bookpub.front.url.pattern}")
     private String frontUrlPattern;
 
     @Bean
@@ -55,5 +49,69 @@ public class GatewayConfig {
                 .build();
         log.warn("routes() 돔");
         return build;
+    }
+
+    public String getFrontUrl() {
+        return frontUrl;
+    }
+
+    public void setFrontUrl(String frontUrl) {
+        this.frontUrl = frontUrl;
+    }
+
+    public String getAuthUrl() {
+        return authUrl;
+    }
+
+    public void setAuthUrl(String authUrl) {
+        this.authUrl = authUrl;
+    }
+
+    public String getDeliveryUrl() {
+        return deliveryUrl;
+    }
+
+    public void setDeliveryUrl(String deliveryUrl) {
+        this.deliveryUrl = deliveryUrl;
+    }
+
+    public String getShoppingUrl() {
+        return shoppingUrl;
+    }
+
+    public void setShoppingUrl(String shoppingUrl) {
+        this.shoppingUrl = shoppingUrl;
+    }
+
+    public String getAuthUrlPattern() {
+        return authUrlPattern;
+    }
+
+    public void setAuthUrlPattern(String authUrlPattern) {
+        this.authUrlPattern = authUrlPattern;
+    }
+
+    public String getDeliveryUrlPattern() {
+        return deliveryUrlPattern;
+    }
+
+    public void setDeliveryUrlPattern(String deliveryUrlPattern) {
+        this.deliveryUrlPattern = deliveryUrlPattern;
+    }
+
+    public String getShoppingUrlPattern() {
+        return shoppingUrlPattern;
+    }
+
+    public void setShoppingUrlPattern(String shoppingUrlPattern) {
+        this.shoppingUrlPattern = shoppingUrlPattern;
+    }
+
+    public String getFrontUrlPattern() {
+        return frontUrlPattern;
+    }
+
+    public void setFrontUrlPattern(String frontUrlPattern) {
+        this.frontUrlPattern = frontUrlPattern;
     }
 }
