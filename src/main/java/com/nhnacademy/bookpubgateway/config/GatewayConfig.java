@@ -1,17 +1,22 @@
 package com.nhnacademy.bookpubgateway.config;
 
+import com.nhnacademy.bookpubgateway.filter.AuthorizationFilter;
+import com.nhnacademy.bookpubgateway.utils.JwtUtils;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.gateway.route.builder.UriSpec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * 라우팅 설정 파일입니다.
  *
- * @author : 임태원
+ * @author : 임태원, 유호철
  * @since : 1.0
  **/
 @Slf4j
@@ -35,7 +40,11 @@ public class GatewayConfig {
     private String frontUrlPattern;
 
     @Bean
-    public RouteLocator frontLocator(RouteLocatorBuilder builder) {
+    public RouteLocator frontLocator(AuthorizationFilter authorizationFilter,
+                                     RedisTemplate<String,Object> redisTemplate,
+                                     JwtUtils jwtUtils,
+                                     RouteLocatorBuilder builder) {
+
         log.info("front-url : {}", frontUrl);
         log.info("shop-url : {}", shoppingUrl);
         log.info("auth-url : {}", authUrl);
@@ -56,9 +65,24 @@ public class GatewayConfig {
                         .uri(deliveryUrl))
                 .route("shopping", r -> r.path(shoppingUrlPattern)
                         .uri(shoppingUrl))
+                .route("shopping-test", r -> r.path("/test")
+                        .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
+                        .uri(shoppingUrl))
                 .build();
         log.warn("routes() 돔");
         return build;
+    }
+
+    private Function<GatewayFilterSpec, UriSpec> tokenFilter(AuthorizationFilter filter,
+                                                             RedisTemplate<String, Object> redisTemplate,
+                                                             JwtUtils jwtUtils) {
+        log.warn("filter 동작");
+        return f -> f.filter(
+                filter.apply(
+                        new AuthorizationFilter.Config(redisTemplate, jwtUtils)
+                )
+        );
+
     }
 
     public String getFrontUrl() {
