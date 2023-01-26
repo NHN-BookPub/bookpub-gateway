@@ -46,6 +46,8 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
+        <!--  Key Manager 를 사용하기위한 dependency       -->
+
         <!-- Jwt -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -58,8 +60,6 @@
             <version>0.9.1</version>
         </dependency>
         <!-- Jwt -->
-
-        <!--  Key Manager 를 사용하기위한 dependency       -->
 
         <!--  Redis 설정 -->
         <dependency>

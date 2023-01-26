@@ -43,6 +43,12 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         super(Config.class);
     }
 
+    /**
+     * apply 를 통해 gateway config 에서 function 으로 동작
+     *
+     * @param config Config 값 적용
+     * @return gatewayfilter 반환
+     */
     @Override
     public GatewayFilter apply(AuthorizationFilter.Config config) {
         return ((exchange, chain) -> {
