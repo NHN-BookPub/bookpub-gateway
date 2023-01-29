@@ -41,7 +41,7 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator frontLocator(AuthorizationFilter authorizationFilter,
-                                     RedisTemplate<String,Object> redisTemplate,
+                                     RedisTemplate<String,String> redisTemplate,
                                      JwtUtils jwtUtils,
                                      RouteLocatorBuilder builder) {
 
@@ -65,7 +65,7 @@ public class GatewayConfig {
                         .uri(deliveryUrl))
                 .route("shopping", r -> r.path(shoppingUrlPattern)
                         .uri(shoppingUrl))
-                .route("shopping-test", r -> r.path("/test")
+                .route("shopping-test", r -> r.path("/test/**")
                         .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
                         .uri(shoppingUrl))
                 .build();
@@ -74,7 +74,7 @@ public class GatewayConfig {
     }
 
     private Function<GatewayFilterSpec, UriSpec> tokenFilter(AuthorizationFilter filter,
-                                                             RedisTemplate<String, Object> redisTemplate,
+                                                             RedisTemplate<String, String> redisTemplate,
                                                              JwtUtils jwtUtils) {
         log.warn("filter 동작");
         return f -> f.filter(
