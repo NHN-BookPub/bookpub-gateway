@@ -21,6 +21,13 @@ import org.springframework.web.server.ServerWebExchange;
 @Slf4j
 @Component
 public class LoggingFilter implements GlobalFilter, Ordered {
+    /**
+     * logging 기록을 남기기 위한 filter 입니다.
+     *
+     * @param exchange 요청기입
+     * @param chain filter chaining
+     * @return 응답값 반환
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
