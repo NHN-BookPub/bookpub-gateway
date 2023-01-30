@@ -26,12 +26,14 @@ import org.springframework.web.server.ServerWebExchange;
 public class AuthorizationFilter extends AbstractGatewayFilterFactory<AuthorizationFilter.Config> {
     private static final String CHECK_TOKEN = "Authorization";
 
+    private static final String REFRESH_TOKEN = "refresh-token";
+
     /**
      * AbstractGatewayFilterFactory 에서 구현해야하는 필수 클래스
      */
     @RequiredArgsConstructor
     public static class Config {
-        private final RedisTemplate<String, Object> redisTemplate;
+        private final RedisTemplate<String, String> redisTemplate;
         private final JwtUtils jwtUtils;
 
     }
@@ -45,6 +47,12 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
 
     /**
      * apply 를 통해 gateway config 에서 function 으로 동작
+     * Flow :
+     *      1. header 의 token 값 유무 확인
+     *      2. payload 의 Claim 값을 변환시켜서 받음
+     *      3. Redis 에 refresh 토큰에 accessToken 의 존재유무 확인
+     *      4. Redis 에 header uuid 를 통해 userNo 의 존재 유무 확인
+     *      5. header 에 id, memberNo 값 넣어서 보냄
      *
      * @param config Config 값 적용
      * @return gatewayfilter 반환
@@ -54,7 +62,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            if (!(request.getHeaders().containsKey(CHECK_TOKEN))) {
+            if (checkHeaderAccessToken(request)) {
                 return handleUnAuthorized(exchange);
             }
             String accessToken = Objects.requireNonNull(request.getHeaders()
@@ -62,7 +70,11 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
 
             TokenPayLoad payLoad = config.jwtUtils.getPayLoad(accessToken);
 
-            if (Objects.isNull(config.redisTemplate.opsForValue().get(payLoad.getMemberUUID()))) {
+            if (checkRefreshToken(config, accessToken)) {
+                return handleUnAuthorized(exchange);
+            }
+
+            if (checkMemberInfo(config, payLoad)) {
                 return handleTokenNotUsed(exchange);
             }
 
@@ -76,18 +88,41 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
     }
 
     /**
-     * redis 에서 값을 비교해서 인증된 토큰인지를 확인하기위한 메서드
+     * Redis 안에 member 의 uuid 값이 있는지 확인하기위한 메서드입니다.
+     * @param config config 값 기입
+     * @param payLoad payload 값을 확인한다.
+     * @return boolean
      */
-    private static void checkRefreshToken() {
-        //TODO : auth 서버 정리후 구현예정
+    private static boolean checkMemberInfo(Config config, TokenPayLoad payLoad) {
+        return Objects.isNull(config.redisTemplate.opsForValue().get(payLoad.getMemberUUID()));
     }
 
+    /**
+     * Request Header 에 accessToken 이 있는지 확인하는 메서드입니다.
+     *
+     * @param request 현재의 요청이 기입
+     * @return boolean
+     */
+    private static boolean checkHeaderAccessToken(ServerHttpRequest request) {
+        return !(request.getHeaders().containsKey(CHECK_TOKEN));
+    }
+
+    /**
+     * Redis 에 refresh token 값이 있는지 검증하는 메서드입니다.
+     *
+     * @param config config 값 기입
+     * @param accessToken accessToken 이 기입된다.
+     * @return boolean
+     */
+    private static boolean checkRefreshToken(Config config, String accessToken) {
+        return Objects.isNull(config.redisTemplate.opsForHash().get(REFRESH_TOKEN, accessToken));
+    }
 
     /**
      * Custom Header 에 정보를 담아서 보내주기위한 메서드입니다.
      *
      * @param exchange webSession 에 접근할수있게해준다.(HttpServletResponse, Request) 랑 같은역할
-     * @param payLoad payload 값을 가공한 값.
+     * @param payLoad  payload 값을 가공한 값.
      * @param memberId 회원의 no
      */
     private static void addAuthorizationHeaders(ServerWebExchange exchange, TokenPayLoad payLoad, String memberId) {
@@ -114,7 +149,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
     }
 
     /**
-     *  Redis 에 관련 access token 값이 없을경우 NOT_FOUND 를 발생한다.
+     * Redis 에 관련 access token 값이 없을경우 NOT_FOUND 를 발생한다.
      *
      * @param exchange webSession 에 접근할수있게해준다.(HttpServletResponse, Requset) 랑 같은역할
      * @return 404 값을 반환한다.
