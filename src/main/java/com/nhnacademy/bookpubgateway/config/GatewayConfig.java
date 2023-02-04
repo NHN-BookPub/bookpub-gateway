@@ -44,33 +44,17 @@ public class GatewayConfig {
                                      RedisTemplate<String,String> redisTemplate,
                                      JwtUtils jwtUtils,
                                      RouteLocatorBuilder builder) {
-
-        log.info("front-url : {}", frontUrl);
-        log.info("shop-url : {}", shoppingUrl);
-        log.info("auth-url : {}", authUrl);
-        log.info("delivery-url : {}", deliveryUrl);
-
-        log.info("front-pattern-url : {}", frontUrlPattern);
-        log.info("shop-pattern-url : {}", shoppingUrlPattern);
-        log.info("auth-pattern-url : {}", authUrlPattern);
-        log.info("delivery-pattern-url : {}", deliveryUrlPattern);
-
-        log.warn("frontLocator call()");
-        RouteLocator build = builder.routes()
-                .route("front", r -> r.path(frontUrlPattern)
-                        .uri(frontUrl))
+        return builder.routes()
                 .route("auth", r -> r.path(authUrlPattern)
                         .uri(authUrl))
                 .route("delivery", r -> r.path(deliveryUrlPattern)
                         .uri(deliveryUrl))
                 .route("shopping", r -> r.path(shoppingUrlPattern)
-                        .uri(shoppingUrl))
-                .route("shopping-test", r -> r.path("/test/**")
                         .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
                         .uri(shoppingUrl))
+                .route("token", r-> r.path("/token/**")
+                        .uri(shoppingUrl))
                 .build();
-        log.warn("routes() 돔");
-        return build;
     }
 
     private Function<GatewayFilterSpec, UriSpec> tokenFilter(AuthorizationFilter filter,
