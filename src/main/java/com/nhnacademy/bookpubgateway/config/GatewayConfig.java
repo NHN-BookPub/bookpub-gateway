@@ -50,9 +50,9 @@ public class GatewayConfig {
                 .route("delivery", r -> r.path(deliveryUrlPattern)
                         .uri(deliveryUrl))
                 .route("shopping", r -> r.path(shoppingUrlPattern)
-                        .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
                         .uri(shoppingUrl))
                 .route("token", r-> r.path("/token/**")
+                        .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
                         .uri(shoppingUrl))
                 .build();
     }
