@@ -38,6 +38,7 @@ public class GatewayConfig {
     private String shoppingUrlPattern;
 
     private String frontUrlPattern;
+    private String tokenUrlPattern;
 
     @Bean
     public RouteLocator frontLocator(AuthorizationFilter authorizationFilter,
@@ -51,7 +52,7 @@ public class GatewayConfig {
                         .uri(deliveryUrl))
                 .route("shopping", r -> r.path(shoppingUrlPattern)
                         .uri(shoppingUrl))
-                .route("token", r-> r.path("/token/**")
+                .route("token", r-> r.path(tokenUrlPattern)
                         .filters(tokenFilter(authorizationFilter, redisTemplate, jwtUtils))
                         .uri(shoppingUrl))
                 .build();
@@ -131,5 +132,13 @@ public class GatewayConfig {
 
     public void setFrontUrlPattern(String frontUrlPattern) {
         this.frontUrlPattern = frontUrlPattern;
+    }
+
+    public String getTokenUrlPattern() {
+        return tokenUrlPattern;
+    }
+
+    public void setTokenUrlPattern(String tokenUrlPattern) {
+        this.tokenUrlPattern = tokenUrlPattern;
     }
 }
