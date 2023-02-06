@@ -24,19 +24,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class GatewayConfig {
     private String frontUrl;
-
     private String authUrl;
-
     private String deliveryUrl;
-
     private String shoppingUrl;
-
     private String authUrlPattern;
-
     private String deliveryUrlPattern;
-
     private String shoppingUrlPattern;
-
     private String frontUrlPattern;
     private String tokenUrlPattern;
 
