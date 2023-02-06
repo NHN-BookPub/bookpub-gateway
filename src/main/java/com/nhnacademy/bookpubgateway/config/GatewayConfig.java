@@ -41,6 +41,7 @@ public class GatewayConfig {
     private String tokenUrlPattern;
 
 
+
     @Bean
     public RouteLocator frontLocator(AuthorizationFilter authorizationFilter,
                                      RedisTemplate<String,String> redisTemplate,
