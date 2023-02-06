@@ -3,7 +3,11 @@ package com.nhnacademy.bookpubgateway.utils;
 import com.nhnacademy.bookpubgateway.config.KeyConfig;
 import com.nhnacademy.bookpubgateway.key.dto.TokenPayLoad;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,11 +33,28 @@ public class JwtUtils {
      * @param accessToken 엑세스 토큰 기입.
      * @return Claims 클레임 들이 반환.
      */
-    public  Claims getPayLoadValue(String accessToken) {
-        return Jwts.parser()
-                .setSigningKey(keyConfig.keyStore(jwtValue).getBytes())
-                .parseClaimsJws(accessToken)
-                .getBody();
+    public Claims getPayLoadValue(String accessToken) {
+        Claims result = null;
+        try {
+            result = Jwts.parser()
+                    .setSigningKey(keyConfig.keyStore(jwtValue).getBytes())
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+
+        } catch (SignatureException |
+                 MalformedJwtException e) {
+            log.error("잘못된 JWT 서명입니다.");
+        } catch (
+                ExpiredJwtException e) {
+            log.error("만료된 JWT 토큰입니다.");
+        } catch (
+                UnsupportedJwtException e) {
+            log.error("지원되지 않는 JWT 토큰입니다.");
+        } catch (
+                IllegalArgumentException e) {
+            log.error("JWT 토큰이 잘못되었습니다.");
+        }
+        return result;
     }
 
     /**

@@ -63,6 +63,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
             ServerHttpRequest request = exchange.getRequest();
 
             if (checkHeaderAccessToken(request)) {
+                log.error("header 가 없는 사용자");
                 return handleUnAuthorized(exchange);
             }
             String accessToken = Objects.requireNonNull(request.getHeaders()
