@@ -63,7 +63,6 @@ public class GatewayConfig {
     private Function<GatewayFilterSpec, UriSpec> tokenFilter(AuthorizationFilter filter,
                                                              RedisTemplate<String, String> redisTemplate,
                                                              JwtUtils jwtUtils) {
-        log.warn("filter 동작");
         return f -> f.filter(
                 filter.apply(
                         new AuthorizationFilter.Config(redisTemplate, jwtUtils)

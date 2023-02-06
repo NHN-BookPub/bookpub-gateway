@@ -72,10 +72,12 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
             TokenPayLoad payLoad = config.jwtUtils.getPayLoad(accessToken);
 
             if (checkRefreshToken(config, accessToken)) {
+                log.error("refresh 토큰이 없음");
                 return handleUnAuthorized(exchange);
             }
 
             if (checkMemberInfo(config, payLoad)) {
+                log.error("redis 에 회원의 정보가 없음");
                 return handleTokenNotUsed(exchange);
             }
 
