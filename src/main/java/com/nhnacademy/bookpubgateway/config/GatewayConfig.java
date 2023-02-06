@@ -40,6 +40,7 @@ public class GatewayConfig {
     private String frontUrlPattern;
     private String tokenUrlPattern;
 
+
     @Bean
     public RouteLocator frontLocator(AuthorizationFilter authorizationFilter,
                                      RedisTemplate<String,String> redisTemplate,
