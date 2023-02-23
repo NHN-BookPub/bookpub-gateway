@@ -173,7 +173,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
      */
     private Mono<Void> handleTokenNotUsed(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.NOT_FOUND);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
         return response.setComplete();
     }
@@ -186,7 +186,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
      */
     private Mono<Void> handleBlackListToken(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.BAD_REQUEST);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
         return response.setComplete();
     }
