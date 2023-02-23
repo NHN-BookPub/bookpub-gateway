@@ -112,7 +112,6 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
      */
     private static boolean checkBlackList(Config config, String accessToken) {
         return Objects.nonNull((config.redisTemplate.opsForHash().get(BLACK_LIST, accessToken)));
-
     }
 
     /**
