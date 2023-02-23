@@ -104,8 +104,15 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         return Objects.isNull(config.redisTemplate.opsForValue().get(payLoad.getMemberUUID()));
     }
 
+    /**
+     *
+     * @param config config 값 기입
+     * @param accessToken accessToken 기입
+     * @return boolean
+     */
     private static boolean checkBlackList(Config config, String accessToken) {
         return Objects.nonNull((config.redisTemplate.opsForHash().get(BLACK_LIST, accessToken)));
+
     }
 
     /**
